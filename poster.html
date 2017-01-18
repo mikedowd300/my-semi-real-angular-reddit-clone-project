@@ -1,0 +1,167 @@
+
+<div class="container">
+  <div class="row">
+    <div class="col-sm-12 col-md-12">
+      <div class="col-xs-2 no-padding">
+        <form novalidate name="filterForm"
+          ng-submit="$ctrl.setFilter()">
+          <input name='filter'
+          type="text"
+          ng-model="$ctrl.filterName"
+          class="form-control" name="search" value="" placeholder="Filter">
+          <button type="button" ng-hide="1===1"></button>
+        </form>
+      </div>
+      <div class="col-xs-2">
+        <select id="dropdown" ng-model="$ctrl.sortVal">
+          <option selected>voteCount</option>
+          <option>time</option>
+          <option>title</option>
+        </select>
+      </div>
+      <div class="col-xs-8">
+        <button type="button"
+          ng-click="$ctrl.myToggle()"
+          name="button"
+          class="btn btn-default btn-info col-xs-offset-10">New Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container" ng-show="$ctrl.toggle">
+  <div class="row">
+    <div class="col-md-6">
+      <form novalidate name='storyPost' ng-submit="$ctrl.postForm($event, storyPost)">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text"
+            name="title"
+            ng-model="$ctrl.story.title"
+            ng-minlength=3
+            ng-class="{'has-error': storyPost.title.$touched && storyPost.title.$invalid}"
+            class="form-control"
+            id="title"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="postBody">Body</label>
+          <input type="textarea"
+            name="postBody"
+            ng-model="$ctrl.story.postBody"
+            ng-minlength=3
+            ng-class="{'has-error': storyPost.postBody.$touched && storyPost.postBody.$invalid}"
+            class="form-control"
+            id="postBody"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="author">Author</label>
+          <input type="text"
+            name="author"
+            ng-model="$ctrl.story.author"
+            ng-minlength=3
+            ng-class="{'has-error': storyPost.author.$touched && storyPost.author.$invalid}"
+            class="form-control"
+            id="author"
+            required>
+        </div>
+        <div class="form-group">
+          <label for="imageURL">Image URL</label>
+          <input type="url"
+            name="imageURL"
+            ng-model="$ctrl.story.imageURL"
+            ng-class="{'has-error': storyPost.imageURL.$touched && storyPost.imageURL.$invalid}"
+            class="form-control"
+            id="imageURL"
+            required>
+        </div>
+        <button type="submit" id="form-submit-btn"
+          ng-disabled="storyPost.$invalid"
+          class="btn btn-default btn-info">Create Post
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="post-container" ng-repeat="story in $ctrl.stories | filter: $ctrl.filterName | orderBy: $ctrl.sortVal: true ">
+
+  <div class="container no-padding">
+    <div class="row">
+      <div class="col-xs-12 flexer card-container bg-info add-margin-bottom">
+        <div class="col-xs-3 image-container">
+          <img class="story-img rounded float-left img-responsive" src="{{story.imageURL}}">
+        </div>
+        <div class="container col-xs-9">
+          <div class="row">
+            <div class="col-xs-10 add-padding-top info-line1">
+              <span>{{story.title}}</span>
+              <span>  |  </span>
+              <span
+                ng-click="story.voteCount = story.voteCount + 1"
+                class="glyphicon glyphicon-arrow-up text-primary" aria-hidden="true"></span>
+              <span
+                ng-click="story.voteCount = $ctrl.downVote(story.voteCount)"
+                class="glyphicon glyphicon-arrow-down text-primary" aria-hidden="true"></span>
+              <span class="text-primary bigger-font">{{story.voteCount}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="container col-xs-12 col-xs-offset-8">
+              <span>{{story.author}}</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-11">
+              <p>{{story.postBody}} <p>
+            </div>
+          </div>
+          <div class="row add-margin-bottom">
+            <span class="add-padding-left" am-time-ago="story.time">
+            </span>
+            <span>  |   </span>
+            <span
+              ng-click="story.commentBool = !story.commentBool"
+              class="glyphicon glyphicon-comment" aria-hidden="true">
+            </span>
+
+            <span
+              ng-click="story.commentBool = !story.commentBool"> {{story.comments.length}} {{$ctrl.plural(story.comments.length)}}
+            </span>
+          </div>
+
+          <div class="row" ng-show="story.commentBool">
+
+            <div class="col-xs-12" ng-repeat="comment in story.comments">
+              <p>{{comment}}</p>
+            </div>
+
+            <form novalidate name="commentPost" ng-submit="$ctrl.submitComment(story, $ctrl.newComment)">
+              <div class="container">
+                <div class="row">
+                  <div class="col-xs-6">
+                    <input
+                    name='commentInput'
+                    ng-model="$ctrl.newComment"
+                    type="text" class="form-control add-margin-bottom"
+                    placeholder="comment">
+                  </div>
+                  <div class="col-xs-3">
+                    <button ng-disabled="commentPost.commentInput.$pristine"
+                    type="submit"
+                    class="btn btn-info btn-default">Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
